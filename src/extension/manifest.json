@@ -1,0 +1,20 @@
+{
+    "manifest_version": 3,
+    "name": "Carsales.com.au Price History Tracker",
+    "version": "1.0",
+    "description": "Fetch and display price history for Carsales listings on search results and saved items pages.",
+    "permissions": ["storage"],
+    "host_permissions": [
+      "https://www.carsales.com.au/*"
+    ],
+    "content_scripts": [
+      {
+        "matches": [
+          "https://www.carsales.com.au/cars/*",
+          "https://www.carsales.com.au/saved-items"
+        ],
+        "js": ["script.js"]
+      }
+    ]
+  }
+  
