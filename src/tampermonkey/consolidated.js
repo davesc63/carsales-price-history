@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Carsales - Consolidated with Stop/Start
+// @name         Carsales - Consolidated with Stop/Start and Donation Modal
 // @namespace    http://tampermonkey.net/
-// @version      2.2
-// @description  Fetch and display price history for Carsales listings with a stop/start toggle button.
+// @version      3.0
+// @description  Fetch and display price history for Carsales listings with a stop/start toggle button and donation modal.
 // @author       davesc63
 // @match        https://www.carsales.com.au/cars/*
 // @match        https://www.carsales.com.au/saved-items
@@ -60,6 +60,79 @@
         bannerDiv.appendChild(toggleButton);
         document.body.prepend(bannerDiv);
     }
+
+    // Create donation modal
+function createDonationModal() {
+    const modalOverlay = document.createElement("div");
+    modalOverlay.id = "donation-modal-overlay";
+    modalOverlay.style.position = "fixed";
+    modalOverlay.style.top = "0";
+    modalOverlay.style.left = "0";
+    modalOverlay.style.width = "100%";
+    modalOverlay.style.height = "100%";
+    modalOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+    modalOverlay.style.display = "flex";
+    modalOverlay.style.alignItems = "center";
+    modalOverlay.style.justifyContent = "center";
+    modalOverlay.style.zIndex = "10001";
+
+    const modal = document.createElement("div");
+    modal.id = "donation-modal";
+    modal.style.backgroundColor = "white";
+    modal.style.padding = "20px";
+    modal.style.borderRadius = "10px";
+    modal.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
+    modal.style.textAlign = "center";
+    modal.style.width = "300px";
+
+    const modalTitle = document.createElement("h2");
+    modalTitle.textContent = "Support This Script";
+    modal.appendChild(modalTitle);
+
+    const modalText = document.createElement("p");
+    modalText.textContent = "Enjoying the functionality? Consider buying me a beer!";
+    modal.appendChild(modalText);
+
+   // Buy me a beer button
+    const buyMeABeerLink = document.createElement("a");
+    buyMeABeerLink.href = "https://www.buymeacoffee.com/davesc63";
+    buyMeABeerLink.target = "_blank"; // Opens the link in a new tab
+    const buyMeABeerButton = document.createElement("img");
+    buyMeABeerButton.src = "https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20beer&emoji=🍺&slug=davesc63&button_colour=FFDD00&font_family=Poppins&font_colour=000000&outline_colour=000000&coffee_colour=ffffff";
+    buyMeABeerButton.alt = "Buy me a beer";
+    buyMeABeerButton.style.display = "block"; // Centering the button
+    buyMeABeerButton.style.margin = "0 auto"; // Center the image button
+    buyMeABeerLink.appendChild(buyMeABeerButton);
+    modal.appendChild(buyMeABeerLink);
+
+
+    // Close button
+    const closeButton = document.createElement("button");
+    closeButton.textContent = "Close";
+    closeButton.style.backgroundColor = "#f44336";
+    closeButton.style.color = "white";
+    closeButton.style.border = "none";
+    closeButton.style.padding = "10px 20px";
+    closeButton.style.fontSize = "16px";
+    closeButton.style.cursor = "pointer";
+    closeButton.style.borderRadius = "5px";
+    closeButton.style.marginTop = "10px";
+    closeButton.addEventListener("click", () => {
+        modalOverlay.remove();
+    });
+
+    modal.appendChild(closeButton);
+    modalOverlay.appendChild(modal);
+
+    document.body.appendChild(modalOverlay);
+}
+
+// Trigger donation modal every 5 minutes
+setInterval(() => {
+    if (!document.querySelector("#donation-modal-overlay")) {
+        createDonationModal();
+    }
+}, 30000); // 5 minutes in milliseconds 300000
 
     async function fetchAndDisplayPriceHistory(sseId, targetElement, isFullWidth = false) {
         if (!isRunning) return; // Stop if the script is paused
