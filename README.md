@@ -1,5 +1,14 @@
 # Carsales Price History Tracker  
 
+
+<p align="center">
+  
+  <a href="https://www.buymeacoffee.com/davesc63">
+    <img src="https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20beer&emoji=🍺&slug=davesc63&button_colour=FFDD00&font_family=Poppins&font_colour=000000&outline_colour=000000&coffee_colour=ffffff" alt="Buy me a beer">
+  </a><br><br>
+</p>
+
+
 ![Carsales Price History Tracker](./assets/cs-logo.png)  
 
 ## Overview  
@@ -32,6 +41,12 @@ or
 1. Navigate to Carsales search results or saved items pages.  
 2. Let the extension process the listings (you’ll see logs in the console for tracking).  
 3. Price history data will appear below each listing.  
+
+## Usage - Stop / Start
+1. Press the "Stop Price History" button to pause the processing. This is a helpful when you have a large amount of cars (search results / saved items) and you don't want to have it processing in the background non-stop
+
+![Carsales Price History Tracker](./assets/stop.png)  
+![Carsales Price History Tracker](./assets/start.png)  
 
 ## Example  
 
