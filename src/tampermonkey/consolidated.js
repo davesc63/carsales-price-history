@@ -132,7 +132,7 @@ setInterval(() => {
     if (!document.querySelector("#donation-modal-overlay")) {
         createDonationModal();
     }
-}, 30000); // 5 minutes in milliseconds 300000
+}, 300000); // 5 minutes in milliseconds 300000
 
     async function fetchAndDisplayPriceHistory(sseId, targetElement, isFullWidth = false) {
         if (!isRunning) return; // Stop if the script is paused
