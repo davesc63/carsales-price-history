@@ -33,7 +33,7 @@
 
 
 ### Tampermonkey
-1. Add the relevant script into Tampermonkey<br>
+1. Add the relevant script into Tampermonkey - <a href="https://github.com/davesc63/carsales-price-history/blob/main/src/tampermonkey/"> Tampermonkey </a> - We recommend the "Consolidated" script<br>
 
 
 
