@@ -9,7 +9,8 @@
 </p>
 
 
-![Carsales Price History Tracker](./assets/icon2.png)  
+<img src="./assets/icon2.png" alt="Carsales Price History Tracker" width="100">
+
 
 ## Overview  
 
