@@ -9,7 +9,7 @@
 </p>
 
 
-![Carsales Price History Tracker](./assets/icon_128.png)  
+![Carsales Price History Tracker](./assets/icon2.png)  
 
 ## Overview  
 
