@@ -9,7 +9,7 @@
 </p>
 
 
-![Carsales Price History Tracker](./assets/cs-logo.png)  
+![Carsales Price History Tracker](./assets/icon_128.png)  
 
 ## Overview  
 
@@ -24,9 +24,17 @@
 
 ## Installation  
 
+### Chrome extension - Web Store
+1. Currently in review
+
+### Chrome Extension - Manual
+1. Install the extension to Chrome - [Download Extension](./extension/extension.crx)
+
+
+### Tampermonkey
 1. Add the relevant script into Tampermonkey<br>
-or
-2. Install the Chrome Extension
+
+
 
 
 

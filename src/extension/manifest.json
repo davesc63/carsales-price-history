@@ -1,20 +1,20 @@
 {
-    "manifest_version": 3,
-    "name": "Carsales.com.au Price History Tracker",
-    "version": "1.0",
-    "description": "Fetch and display price history for Carsales listings on search results and saved items pages.",
-    "permissions": ["storage"],
-    "host_permissions": [
-      "https://www.carsales.com.au/*"
-    ],
-    "content_scripts": [
+  "manifest_version": 3,
+  "name": "Carsales.com.au Price History Tracker",
+  "version": "1.0",
+  "description": "Fetch and display price history for Carsales listings on search results, saved items pages and individual listings.",
+  "icons": {
+      "16": "icon_16.png",
+      "48": "icon_48.png",
+      "128": "icon_128.png"
+  },
+
+  "content_scripts": [
       {
-        "matches": [
-          "https://www.carsales.com.au/cars/*",
-          "https://www.carsales.com.au/saved-items"
-        ],
-        "js": ["script.js"]
+          "matches": [
+              "https://www.carsales.com.au/*"
+          ],
+          "js": ["script.js"]
       }
-    ]
-  }
-  
+  ]
+}
