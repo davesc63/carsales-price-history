@@ -8,9 +8,9 @@
   </a><br><br>
 </p>
 
-
-<img src="./assets/icon2.png" alt="Carsales Price History Tracker" width="100">
-
+<p align="center">
+<img src="./assets/icon2.png" alt="Carsales Price History Tracker" width="50%">
+</p>
 
 ## Overview  
 
