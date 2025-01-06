@@ -134,11 +134,45 @@ setInterval(() => {
     }
 }, 300000); // 5 minutes in milliseconds 300000
 
-    async function fetchAndDisplayPriceHistory(sseId, targetElement, isFullWidth = false) {
+    async function fetchAndDisplayPriceHistory(sseId, targetElement, carURL, isFullWidth = false) {
         if (!isRunning) return; // Stop if the script is paused
 
         const apiUrl = `https://www.carsales.com.au/mobiapi/carsales/v1/insights/${sseId}`;
+
         try {
+
+
+
+            // Fetch the carURL and log the raw text
+            console.log(`[ CARSALES PRICE HISTORY ] - Processing carURL: ${carURL}`);
+            const carResponse = await fetch(carURL);
+            const carText = await carResponse.text();
+            //console.log(`[ CARSALES PRICE HISTORY ] - Response text from carURL: ${carText}`);
+
+            // Parse the carText to extract the lastModifiedDate
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(carText, "text/html");
+
+            // Find the div containing "Last Modified"
+            const lastModifiedLabel = Array.from(doc.querySelectorAll("span.iompba0._1lalutrg0._1lalutr14o._1tlv1fe6n.a6hzxt3.a6hzxt0.a6hzxt0"))
+            .find(el => el.textContent.trim() === "Last Modified");
+
+            let lastModifiedDate = "Unknown";
+            if (lastModifiedLabel) {
+                // Find the parent div and navigate to the sibling containing the date
+                const parentDiv = lastModifiedLabel.closest("div");
+                const dateSpan = parentDiv?.nextElementSibling?.querySelector("span.iompba0._1lalutrg0._1lalutr14o._1tlv1fe6o.a6hzxt3.a6hzxt0.a6hzxt0");
+
+                if (dateSpan) {
+                    lastModifiedDate = dateSpan.textContent.trim();
+                }
+            }
+
+
+
+            console.log(`[ CARSALES PRICE HISTORY ] - Last Modified Date: ${lastModifiedDate}`);
+
+
             const response = await fetch(apiUrl);
             if (!response.ok) {
                 console.error(`[ CARSALES PRICE HISTORY ] - Error fetching price history for SSE ID: ${sseId}. Status: ${response.status}`);
@@ -165,7 +199,7 @@ setInterval(() => {
                     priceHistoryDiv.style.width = "100%";
                 }
 
-                let contentHtml = `<ul>`;
+                let contentHtml = ``;
                 if (priceChangeSection.priceTimeLine?.items) {
                     let totalReductionTitle = priceChangeSection.priceTimeLine.title || "No price info.";
                     totalReductionTitle = totalReductionTitle.replace("Total price", "").trim();
@@ -182,7 +216,10 @@ setInterval(() => {
                     const restWithBoldDollars = rest.map(word =>
                         word.startsWith("$") ? `<strong>${word}</strong>` : word).join(" ");
 
-                    contentHtml += `<li>${styledDirection} ${restWithBoldDollars}</li>`;
+                    contentHtml += `<p style="margin: 0; padding-left: 20px;">${styledDirection} ${restWithBoldDollars}
+                    </p>`;
+
+                    contentHtml += `<ul>`;
 
                     priceChangeSection.priceTimeLine.items.forEach(item => {
                         contentHtml += `<li>${item.key}: ${item.value}</li>`;
@@ -191,6 +228,13 @@ setInterval(() => {
                     contentHtml += `<li>${priceChangeSection.priceUpdate?.subtitle || "No updates."}</li>`;
                 }
                 contentHtml += `</ul>`;
+
+                // Append the last modified date under the price history content
+                contentHtml += `<p style="margin: 0; padding-left: 20px;">
+                  <strong>Last Modified:</strong> ${lastModifiedDate}
+                </p>`;
+
+
 
                 priceHistoryDiv.innerHTML = contentHtml;
                 targetElement.appendChild(priceHistoryDiv);
@@ -209,14 +253,20 @@ setInterval(() => {
         for (const listing of listings) {
             if (!isRunning) return; // Stop if the script is paused
 
-            const priceAnchorElement = listing.querySelector("a[href*='price-guide']");
-            if (!priceAnchorElement) continue;
+            const hrefElement = listing.querySelector("a[class*='_listing-card-href']");
+            if (!hrefElement) continue;
 
-            const sseIdMatch = priceAnchorElement.href.match(/SSE-AD-\d+/);
+            const carURL = hrefElement.href;
+            console.log("[ CARSALES PRICE HISTORY ] - CarURL: ", carURL);
+            if (!carURL) continue;
+
+            const sseIdMatch = carURL.match(/SSE-AD-\d+/);
+            console.log("[ CARSALES PRICE HISTORY ] - SSEIDMATCH", sseIdMatch);
             if (!sseIdMatch) continue;
 
             const sseId = sseIdMatch[0];
             if (listing.getAttribute("data-sse-id") === sseId) continue;
+            console.log("[ CARSALES PRICE HISTORY ] - SSE ID:", sseId);
 
             listing.setAttribute("data-sse-id", sseId);
 
@@ -248,7 +298,7 @@ setInterval(() => {
 
             targetElement.insertBefore(priceHistoryDiv, cardBodyElement);
 
-            await fetchAndDisplayPriceHistory(sseId, priceHistoryDiv, true);
+            await fetchAndDisplayPriceHistory(sseId, priceHistoryDiv, carURL, true);
             await delay(5000); // Rate limiting
         }
     }
@@ -264,32 +314,53 @@ setInterval(() => {
 
             const sseId = listing.id;
             const containerElement = listing.querySelector(".row");
-            if (sseId && containerElement) {
-                await fetchAndDisplayPriceHistory(sseId, containerElement, true);
+            const linkElement = listing.querySelector("a[data-href]"); // Find the <a> tag with data-href
+
+            if (sseId && containerElement && linkElement) {
+                // Extract carURL from the data-href attribute
+                const relativeHref = linkElement.getAttribute("data-href");
+                const carURL = `https://www.carsales.com.au${relativeHref}`;
+
+                console.log(`[ CARSALES PRICE HISTORY ] - CarURL: ${carURL}`);
+                console.log(`[ CARSALES PRICE HISTORY ] - Processing SSE ID: ${sseId}, URL: ${carURL}`);
+
+                await fetchAndDisplayPriceHistory(sseId, containerElement, carURL, true);
                 await delay(5000);
+            } else {
+                console.warn(`[ CARSALES PRICE HISTORY ] - Missing data for SSE ID: ${sseId}`);
             }
         }
     }
 
+
     async function processIndividualListing() {
         if (!isRunning) return; // Stop if the script is paused
 
-        const sseIdMatch = window.location.href.match(/SSE-AD-\d+/);
+        // Use the current page URL
+        const carURL = window.location.href;
+        console.log(`[ CARSALES PRICE HISTORY ] - CarURL: ${carURL}`);
+
+        // Extract the SSE ID from the URL
+        const sseIdMatch = carURL.match(/SSE-AD-\d+/);
         if (!sseIdMatch) {
-            console.error(`[ CARSALES PRICE HISTORY ] - SSE ID not found in URL.`);
+            console.error(`[ CARSALES PRICE HISTORY ] - SSE ID not found in URL: ${carURL}`);
             return;
         }
 
         const sseId = sseIdMatch[0];
-        const priceOuterLayout = document.querySelector("[id='details:body:hero-image']");
+        console.log(`[ CARSALES PRICE HISTORY ] - Extracted SSE ID: ${sseId}`);
 
+        // Locate the price container on the page
+        const priceOuterLayout = document.querySelector("[id='details:body:hero-image']");
         if (!priceOuterLayout) {
             console.error(`[ CARSALES PRICE HISTORY ] - Price outer layout container not found.`);
             return;
         }
 
-        await fetchAndDisplayPriceHistory(sseId, priceOuterLayout);
+        // Fetch and display the price history
+        await fetchAndDisplayPriceHistory(sseId, priceOuterLayout, carURL);
     }
+
 
     function main() {
         if (!isRunning) return; // Stop if the script is paused
