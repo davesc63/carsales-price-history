@@ -4,26 +4,17 @@
   "version": "1.1",
   "description": "Fetch and display price history for Carsales listings on search results, saved items pages and individual listings.",
   "icons": {
-    "16": "icon_16.png",
-    "48": "icon_48.png",
-    "128": "icon_128.png"
+      "16": "icon_16.png",
+      "48": "icon_48.png",
+      "128": "icon_128.png"
   },
-  "background": {
-    "service_worker": "background.js"
-  },
-  "permissions": [
-    "storage",
-    "tabs"
-  ],
+
   "content_scripts": [
-    {
-      "matches": [
-        "https://www.carsales.com.au/*"
-      ],
-      "js": ["script.js"]
-    }
-  ],
-  "host_permissions": [
-    "https://raw.githubusercontent.com/*"
+      {
+          "matches": [
+              "https://www.carsales.com.au/*"
+          ],
+          "js": ["script.js"]
+      }
   ]
 }
